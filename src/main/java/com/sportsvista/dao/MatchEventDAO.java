@@ -35,7 +35,14 @@ public class MatchEventDAO {
     }
 
     public List<MatchEvent> getByMatchId(int matchId) throws SQLException {
-        String sql = "SELECT * FROM match_events WHERE match_id = ? ORDER BY event_order DESC, CAST(event_minute AS UNSIGNED) DESC";
+        String sql;
+        if (com.sportsvista.util.DBConnection.isPostgres()) {
+            // Postgres needs more care with casting to avoid errors on strings like "90+2"
+            sql = "SELECT * FROM match_events WHERE match_id = ? ORDER BY event_order DESC, " +
+                  "CASE WHEN event_minute ~ '^[0-9]+$' THEN CAST(event_minute AS INTEGER) ELSE 0 END DESC";
+        } else {
+            sql = "SELECT * FROM match_events WHERE match_id = ? ORDER BY event_order DESC, CAST(event_minute AS UNSIGNED) DESC";
+        }
         List<MatchEvent> list = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
