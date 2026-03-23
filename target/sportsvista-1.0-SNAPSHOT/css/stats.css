@@ -1,0 +1,162 @@
+/* ========================================
+   SportsVista — Stats & Timeline
+   Premium Light Theme
+   ======================================== */
+
+.stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: var(--bg-card);
+  padding: 26px;
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-light);
+  animation: fadeInUp 0.5s var(--ease-out) 0.1s both;
+}
+
+.stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 6px 0;
+  transition: transform 0.2s var(--ease-out);
+}
+
+.stat-row:hover {
+  transform: translateX(2px);
+}
+
+.stat-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.stat-name {
+  color: var(--text-3);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+
+.stat-bar-container {
+  display: flex;
+  height: 6px;
+  background: var(--bg-page);
+  border-radius: 3px;
+  overflow: hidden;
+  gap: 2px;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.8s var(--ease-out);
+}
+
+.stat-bar-home {
+  background: linear-gradient(90deg, var(--brand), #14B8A6);
+}
+
+.stat-bar-away {
+  background: linear-gradient(90deg, #CBD5E1, #94A3B8);
+}
+
+/* ---- Timeline ---- */
+.timeline-container {
+  background: var(--bg-card);
+  padding: 26px;
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-light);
+  animation: fadeInUp 0.5s var(--ease-out) both;
+}
+
+.event-item {
+  display: flex;
+  gap: 18px;
+  padding: 14px 8px;
+  border-bottom: 1px solid var(--border-light);
+  transition: all 0.25s var(--ease-out);
+  border-radius: 8px;
+  margin: 0 -8px;
+}
+
+.event-item:hover {
+  background: var(--surface-hover);
+  transform: translateX(4px);
+}
+
+.event-item:last-child {
+  border-bottom: none;
+}
+
+.event-time {
+  font-weight: 700;
+  color: var(--brand);
+  min-width: 42px;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  padding-top: 1px;
+}
+
+.event-icon {
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.event-detail {
+  flex: 1;
+}
+
+.event-player {
+  font-weight: 600;
+  color: var(--text-1);
+  font-size: 0.9rem;
+}
+
+.event-desc {
+  font-size: 0.82rem;
+  color: var(--text-3);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+/* ---- Lineup Grid ---- */
+.lineup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.lineup-player {
+  padding: 10px 14px;
+  background: var(--bg-page);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  transition: all 0.2s var(--ease-out);
+  border: 1px solid transparent;
+}
+
+.lineup-player:hover {
+  background: var(--brand-light);
+  border-color: rgba(13, 148, 136, 0.15);
+  transform: translateY(-1px);
+}
+
+.lineup-player strong {
+  color: var(--text-1);
+  font-weight: 600;
+}
+
+.lineup-player span {
+  color: var(--text-3);
+  font-size: 0.75rem;
+  margin-left: 4px;
+}

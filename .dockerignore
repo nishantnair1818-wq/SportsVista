@@ -1,0 +1,11 @@
+target/
+.git/
+.gitignore
+*.iml
+.idea/
+.vscode/
+.gemini/
+*.md
+apache-maven-3.9.6/
+run.ps1
+run_jetty.ps1

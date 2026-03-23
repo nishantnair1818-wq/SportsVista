@@ -1,0 +1,128 @@
+/* ========================================
+   SportsVista — Scorecard
+   Premium Light Theme
+   ======================================== */
+
+.scorecard-container {
+  background: var(--bg-card);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 20px;
+  border: 1px solid var(--border-light);
+  animation: fadeInUp 0.5s var(--ease-out) both;
+  transition: box-shadow 0.3s var(--ease-out);
+}
+
+.scorecard-container:hover {
+  box-shadow: var(--card-shadow-lg);
+}
+
+.innings-header {
+  background: linear-gradient(135deg, var(--brand-light) 0%, #CCFBF1 100%);
+  padding: 14px 22px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--brand-dark);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  letter-spacing: -0.2px;
+  border-bottom: 1px solid rgba(13, 148, 136, 0.1);
+}
+
+.scorecard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.scorecard-table th {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  padding: 12px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-page);
+}
+
+.scorecard-table td {
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.88rem;
+  transition: background 0.15s;
+}
+
+.scorecard-table tr {
+  transition: background 0.2s;
+}
+
+.scorecard-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.col-runs, .col-balls, .col-4s, .col-6s, .col-sr {
+  text-align: right;
+  width: 60px;
+}
+
+.col-runs {
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.batting-now {
+  color: var(--brand);
+  font-weight: 700;
+  position: relative;
+}
+
+.batting-now::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  background: var(--brand);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+.dismissal {
+  color: var(--text-3);
+  font-size: 0.78rem;
+  margin-top: 3px;
+  font-style: italic;
+}
+
+.bowling-section {
+  margin-top: 0;
+  border-top: 2px solid var(--border-light);
+}
+
+.col-o, .col-m, .col-r, .col-w, .col-eco {
+  text-align: right;
+  width: 60px;
+}
+
+.col-w {
+  font-weight: 700;
+  color: var(--live-red);
+}
+
+.extras-row {
+  background: var(--bg-page);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.total-row {
+  background: linear-gradient(135deg, var(--brand-light), #CCFBF1);
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--brand-dark);
+}

@@ -1,0 +1,165 @@
+/* ========================================
+   SportsVista — Match Center
+   Premium Light Theme
+   ======================================== */
+
+/* ---- Match Header ---- */
+.match-header {
+  background: var(--bg-card);
+  padding: 36px;
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.5s var(--ease-out) both;
+}
+
+.match-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--brand), #14B8A6, #5EEAD4, var(--brand));
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+
+.header-meta {
+  font-size: 0.8rem;
+  color: var(--text-3);
+  font-weight: 600;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.header-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+}
+
+.header-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  animation: fadeInUp 0.6s var(--ease-out) both;
+}
+
+.header-team:first-child { animation-delay: 0.1s; }
+.header-team:last-child { animation-delay: 0.2s; }
+
+.header-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  transition: transform 0.4s var(--ease-spring);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
+}
+
+.header-logo:hover {
+  transform: scale(1.1) rotate(-2deg);
+}
+
+.header-team-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-1);
+  letter-spacing: -0.3px;
+}
+
+.header-score {
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+  animation: fadeIn 0.8s var(--ease-out) 0.3s both;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.header-vs {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-3);
+  padding: 6px 16px;
+  background: var(--bg-page);
+  border-radius: 20px;
+}
+
+.header-status {
+  margin-top: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--brand);
+  padding: 6px 20px;
+  background: var(--brand-light);
+  border-radius: 20px;
+  display: inline-block;
+  animation: fadeIn 0.6s var(--ease-out) 0.4s both;
+}
+
+/* ---- Tabs ---- */
+.match-tabs {
+  display: flex;
+  background: var(--bg-card);
+  border-radius: 14px;
+  margin-bottom: 20px;
+  box-shadow: var(--card-shadow);
+  padding: 6px;
+  gap: 4px;
+  animation: fadeInUp 0.5s var(--ease-out) 0.15s both;
+}
+
+.match-tab {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 12px 22px;
+  color: var(--text-3);
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-out);
+  position: relative;
+}
+
+.match-tab:hover {
+  color: var(--text-2);
+  background: var(--surface-hover);
+}
+
+.match-tab.active {
+  color: var(--brand);
+  background: var(--brand-light);
+  box-shadow: 0 1px 3px rgba(13, 148, 136, 0.1);
+}
+
+.tab-content {
+  display: none;
+  animation: fadeInUp 0.4s var(--ease-out);
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .header-main {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .header-score {
+    font-size: 2rem;
+  }
+  .match-tabs {
+    flex-wrap: wrap;
+  }
+}
