@@ -21,7 +21,10 @@ public class AppLifecycleListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        // 1. Initialize Sport Registry
+        // 1. Auto-initialize Database if empty
+        checkAndInitDatabase();
+
+        // 2. Initialize Sport Registry
         try {
             List<Sport> sports = new SportDAO().getAllSports();
             System.out.println("Initializing SportRegistry with " + sports.size() + " sports.");
@@ -40,12 +43,62 @@ public class AppLifecycleListener implements ServletContextListener {
         ScorecardSyncScheduler scorecardSync = new ScorecardSyncScheduler();
         MetaSyncScheduler metaSync = new MetaSyncScheduler();
 
-        // 2. Start Schedulers
+        // 3. Start Schedulers
         scheduler.scheduleAtFixedRate(liveSync::syncAll, 0, 120, TimeUnit.SECONDS);
         scheduler.scheduleAtFixedRate(scorecardSync::syncAllDetails, 5, 120, TimeUnit.SECONDS);
         scheduler.scheduleAtFixedRate(metaSync::syncMetadata, 0, 24, TimeUnit.HOURS);
         
         System.out.println("SportsVista Schedulers Started.");
+    }
+
+    private void checkAndInitDatabase() {
+        try (java.sql.Connection conn = com.sportsvista.util.DBConnection.getConnection()) {
+            // Check if sports table exists
+            boolean empty = false;
+            try (java.sql.ResultSet rs = conn.getMetaData().getTables(null, null, "sports", null)) {
+                if (!rs.next()) {
+                    // Try lowercase check for Postgres compatibility
+                    try (java.sql.ResultSet rs2 = conn.getMetaData().getTables(null, null, "sports", null)) {
+                        if (!rs2.next()) empty = true;
+                    }
+                }
+            }
+
+            if (empty) {
+                System.out.println("Database seems empty. Running auto-initialization...");
+                String sqlFile = com.sportsvista.util.DBConnection.isPostgres() ? "database_pg.sql" : "database.sql";
+                java.io.File file = new java.io.File(sqlFile);
+                if (!file.exists()) {
+                    // Try absolute path if in container
+                    file = new java.io.File("/app/" + sqlFile);
+                }
+
+                if (file.exists()) {
+                    String sql = new String(java.nio.file.Files.readAllBytes(file.toPath()));
+                    // Split SQL by semicolon, ensuring we skip empty parts
+                    String[] statements = sql.split(";");
+                    try (java.sql.Statement stmt = conn.createStatement()) {
+                        conn.setAutoCommit(false);
+                        for (String s : statements) {
+                            String trimmed = s.trim();
+                            if (!trimmed.isEmpty()) {
+                                stmt.addBatch(trimmed);
+                            }
+                        }
+                        stmt.executeBatch();
+                        conn.commit();
+                        System.out.println("Database auto-initialized successfully using " + sqlFile);
+                    } catch (Exception ex) {
+                        conn.rollback();
+                        throw ex;
+                    }
+                } else {
+                    System.err.println("Auto-init error: Could not find SQL file " + sqlFile);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Auto-init warning (Normal if DB is already ready): " + e.getMessage());
+        }
     }
 
     @Override
