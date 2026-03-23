@@ -7,14 +7,26 @@ import java.sql.*;
 public class MatchInfoDAO {
 
     public void upsertInfo(MatchInfo info) throws SQLException {
-        String sql = "INSERT INTO match_info (match_id, umpires, match_referee, tv_umpire, attendance, weather_conditions, " +
-                     "pitch_conditions, toss_winner, toss_decision, series_context, extra_info_json) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
-                     "ON DUPLICATE KEY UPDATE " +
-                     "umpires=VALUES(umpires), match_referee=VALUES(match_referee), tv_umpire=VALUES(tv_umpire), " +
-                     "attendance=VALUES(attendance), weather_conditions=VALUES(weather_conditions), pitch_conditions=VALUES(pitch_conditions), " +
-                     "toss_winner=VALUES(toss_winner), toss_decision=VALUES(toss_decision), series_context=VALUES(series_context), " +
-                     "extra_info_json=VALUES(extra_info_json)";
+        String sql;
+        if (DBConnection.isPostgres()) {
+            sql = "INSERT INTO match_info (match_id, umpires, match_referee, tv_umpire, attendance, weather_conditions, " +
+                  "pitch_conditions, toss_winner, toss_decision, series_context, extra_info_json) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                  "ON CONFLICT (match_id) DO UPDATE SET " +
+                  "umpires=EXCLUDED.umpires, match_referee=EXCLUDED.match_referee, tv_umpire=EXCLUDED.tv_umpire, " +
+                  "attendance=EXCLUDED.attendance, weather_conditions=EXCLUDED.weather_conditions, pitch_conditions=EXCLUDED.pitch_conditions, " +
+                  "toss_winner=EXCLUDED.toss_winner, toss_decision=EXCLUDED.toss_decision, series_context=EXCLUDED.series_context, " +
+                  "extra_info_json=EXCLUDED.extra_info_json";
+        } else {
+            sql = "INSERT INTO match_info (match_id, umpires, match_referee, tv_umpire, attendance, weather_conditions, " +
+                  "pitch_conditions, toss_winner, toss_decision, series_context, extra_info_json) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                  "ON DUPLICATE KEY UPDATE " +
+                  "umpires=VALUES(umpires), match_referee=VALUES(match_referee), tv_umpire=VALUES(tv_umpire), " +
+                  "attendance=VALUES(attendance), weather_conditions=VALUES(weather_conditions), pitch_conditions=VALUES(pitch_conditions), " +
+                  "toss_winner=VALUES(toss_winner), toss_decision=VALUES(toss_decision), series_context=VALUES(series_context), " +
+                  "extra_info_json=VALUES(extra_info_json)";
+        }
         
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

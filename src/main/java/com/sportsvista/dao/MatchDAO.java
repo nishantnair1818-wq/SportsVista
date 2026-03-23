@@ -9,14 +9,26 @@ import java.util.List;
 public class MatchDAO {
 
     public void upsertMatch(Match match) throws SQLException {
-        String sql = "INSERT INTO matches (external_id, sport_id, competition_id, team1_id, team2_id, match_type, match_sub_type, status, " +
-                     "score_display_team1, score_display_team2, status_summary_text, match_date, venue, venue_city, venue_country, " +
-                     "toss_text, result_text, match_day_label) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
-                     "ON DUPLICATE KEY UPDATE " +
-                     "status=VALUES(status), score_display_team1=VALUES(score_display_team1), score_display_team2=VALUES(score_display_team2), " +
-                     "status_summary_text=VALUES(status_summary_text), toss_text=VALUES(toss_text), result_text=VALUES(result_text), " +
-                     "match_day_label=VALUES(match_day_label), last_updated=CURRENT_TIMESTAMP";
+        String sql;
+        if (DBConnection.isPostgres()) {
+            sql = "INSERT INTO matches (external_id, sport_id, competition_id, team1_id, team2_id, match_type, match_sub_type, status, " +
+                  "score_display_team1, score_display_team2, status_summary_text, match_date, venue, venue_city, venue_country, " +
+                  "toss_text, result_text, match_day_label) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                  "ON CONFLICT (external_id) DO UPDATE SET " +
+                  "status=EXCLUDED.status, score_display_team1=EXCLUDED.score_display_team1, score_display_team2=EXCLUDED.score_display_team2, " +
+                  "status_summary_text=EXCLUDED.status_summary_text, toss_text=EXCLUDED.toss_text, result_text=EXCLUDED.result_text, " +
+                  "match_day_label=EXCLUDED.match_day_label, last_updated=CURRENT_TIMESTAMP";
+        } else {
+            sql = "INSERT INTO matches (external_id, sport_id, competition_id, team1_id, team2_id, match_type, match_sub_type, status, " +
+                  "score_display_team1, score_display_team2, status_summary_text, match_date, venue, venue_city, venue_country, " +
+                  "toss_text, result_text, match_day_label) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                  "ON DUPLICATE KEY UPDATE " +
+                  "status=VALUES(status), score_display_team1=VALUES(score_display_team1), score_display_team2=VALUES(score_display_team2), " +
+                  "status_summary_text=VALUES(status_summary_text), toss_text=VALUES(toss_text), result_text=VALUES(result_text), " +
+                  "match_day_label=VALUES(match_day_label), last_updated=CURRENT_TIMESTAMP";
+        }
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -46,7 +58,6 @@ public class MatchDAO {
                 if (generatedKeys.next()) {
                     match.setId(generatedKeys.getInt(1));
                 } else {
-                    // If no key generated, it was an update. Fetch ID by external_id.
                     match.setId(getIdByExternalId(match.getExternalId()));
                 }
             }
@@ -97,7 +108,7 @@ public class MatchDAO {
         return matches;
     }
 
-    public List<Match> getLiveMatches(int sportId) throws Exception { // Changed throws SQLException to throws Exception
+    public List<Match> getLiveMatches(int sportId) throws Exception {
         String sql = "SELECT m.*, t1.team_name as team1_name, t1.logo_url as team1_logo, " +
                      "t2.team_name as team2_name, t2.logo_url as team2_logo, c.competition_name " +
                      "FROM matches m " +

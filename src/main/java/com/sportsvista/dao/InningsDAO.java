@@ -9,11 +9,20 @@ import java.util.List;
 public class InningsDAO {
 
     public void upsertInnings(MatchInnings innings) throws SQLException {
-        String sql = "INSERT INTO match_innings (match_id, innings_number, batting_team_id, total_runs, total_wickets, total_overs, extras, innings_status) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
-                     "ON DUPLICATE KEY UPDATE " +
-                     "total_runs=VALUES(total_runs), total_wickets=VALUES(total_wickets), total_overs=VALUES(total_overs), " +
-                     "extras=VALUES(extras), innings_status=VALUES(innings_status)";
+        String sql;
+        if (DBConnection.isPostgres()) {
+            sql = "INSERT INTO match_innings (match_id, innings_number, batting_team_id, total_runs, total_wickets, total_overs, extras, innings_status) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
+                  "ON CONFLICT (match_id, innings_number) DO UPDATE SET " +
+                  "total_runs=EXCLUDED.total_runs, total_wickets=EXCLUDED.total_wickets, total_overs=EXCLUDED.total_overs, " +
+                  "extras=EXCLUDED.extras, innings_status=EXCLUDED.innings_status";
+        } else {
+            sql = "INSERT INTO match_innings (match_id, innings_number, batting_team_id, total_runs, total_wickets, total_overs, extras, innings_status) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
+                  "ON DUPLICATE KEY UPDATE " +
+                  "total_runs=VALUES(total_runs), total_wickets=VALUES(total_wickets), total_overs=VALUES(total_overs), " +
+                  "extras=VALUES(extras), innings_status=VALUES(innings_status)";
+        }
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

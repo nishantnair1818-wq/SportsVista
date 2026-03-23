@@ -7,10 +7,18 @@ import java.sql.*;
 public class TeamDAO {
 
     public void upsertTeam(Team team) throws SQLException {
-        String sql = "INSERT INTO teams (external_id, team_name, short_name, sport_id, country, logo_url, team_type) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?) " +
-                     "ON DUPLICATE KEY UPDATE " +
-                     "team_name=VALUES(team_name), short_name=VALUES(short_name), logo_url=VALUES(logo_url)";
+        String sql;
+        if (DBConnection.isPostgres()) {
+            sql = "INSERT INTO teams (external_id, team_name, short_name, sport_id, country, logo_url, team_type) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, ?) " +
+                  "ON CONFLICT (external_id) DO UPDATE SET " +
+                  "team_name=EXCLUDED.team_name, short_name=EXCLUDED.short_name, logo_url=EXCLUDED.logo_url";
+        } else {
+            sql = "INSERT INTO teams (external_id, team_name, short_name, sport_id, country, logo_url, team_type) " +
+                  "VALUES (?, ?, ?, ?, ?, ?, ?) " +
+                  "ON DUPLICATE KEY UPDATE " +
+                  "team_name=VALUES(team_name), short_name=VALUES(short_name), logo_url=VALUES(logo_url)";
+        }
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
